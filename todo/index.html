@@ -132,18 +132,17 @@
       localStorage.setItem("todo-list", JSON.stringify(data));
     }
 
-    function handleAddContent(e) {
-      e.preventDefault();
-
-      const input = todoForm.querySelector("input");
-
+    function insertTableRow(content, completed) {
       // Create <tr> element for todo entry.
       const tr = document.createElement("tr");
+      if (completed) {
+        tr.classList.add("completed");
+      }
 
       // Create <td> element for content.
       const contentTd = document.createElement("td");
       contentTd.classList.add("content");
-      contentTd.innerText = input.value;
+      contentTd.innerText = content;
       contentTd.addEventListener("click", () => handleUpdateContent(tr));
 
       // Create <td> element for check.
@@ -161,6 +160,14 @@
 
       // Insert the <tr> element to the todo table.
       todoTable.querySelector("tbody").append(tr);
+    }
+
+    function handleAddContent(e) {
+      e.preventDefault();
+
+      const input = todoForm.querySelector("input");
+
+      insertTableRow(input.value, false);
 
       // Make the input empty.
       input.value = "";
@@ -202,33 +209,7 @@
     const existingData = localStorage.getItem("todo-list");
     if (existingData) {
       JSON.parse(existingData).forEach((row) => {
-        // Create <tr> element for todo entry.
-        const tr = document.createElement("tr");
-        if (row.completed) {
-          tr.classList.add("completed");
-        }
-
-        // Create <td> element for content.
-        const contentTd = document.createElement("td");
-        contentTd.classList.add("content");
-        contentTd.innerText = row.content;
-        contentTd.addEventListener("click", () => handleUpdateContent(tr));
-
-        // Create <td> element for check.
-        const checkTd = document.createElement("td");
-        checkTd.classList.add("check");
-        checkTd.addEventListener("click", () => handleCheckContent(tr));
-
-        // Create <td> element for delete.
-        const deleteTd = document.createElement("td");
-        deleteTd.classList.add("delete");
-        deleteTd.addEventListener("click", () => handleDeleteContent(tr));
-
-        // Insert the three <td> elements above to the <tr> element.
-        tr.append(contentTd, checkTd, deleteTd);
-
-        // Insert the <tr> element to the todo table.
-        todoTable.querySelector("tbody").append(tr);
+        insertTableRow(row.content, row.completed);
       });
     }
   </script>
